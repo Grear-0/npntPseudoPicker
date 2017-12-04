@@ -1,6 +1,7 @@
 import interfascia.*;
 
-String [] pseudosList;
+String [] pseudosList; // all pseudos
+
 PImage
   tartineImage, // ULTIMATE Tartine Button !!
   settingsImage
@@ -8,9 +9,11 @@ PImage
 
 private static GUIController gc; // our GUI controller that manage UI elements
 
-String randPseudo;
+private static IFButton paramButton;
 
-int mode = 1; // Actual mode
+String randPseudo; // picked pseudo
+
+int mode = 1, modeDelta = 2; // Actual mode and previous mode (must be different at start)
 
 final static int
   SETTINGS = 0,
@@ -25,23 +28,30 @@ void setup (){
   //Init UI
   gc = new GUIController (this);
   
+  paramButton = new IFButton ("P", width - 60, 10, 50, 50);
+  
   //Init pseudos
   loadPseudos ();
   randPseudo = getRandom (sortPseudos(false));
 }
 
 void draw (){
-  noLoop ();
-  if (mode == SETTINGS){
-    drawSettings ();
-  }
-  else if (mode == PICK){
-    textSize (24);
-    text (randPseudo, 10, 30);
-  }
-  else{
-    //Draw the Tartine Button
-    //Set mode to PICK on click.
+  if (mode != modeDelta){
+    
+    mode = modeDelta;
+    if (mode == SETTINGS){
+      drawSettings ();
+    }
+    else if (mode == PICK){
+      int decal = (int)randPseudo.chars().count() * 7;
+      textSize (32);
+      text (randPseudo, width/2 - decal, height/2);
+    }
+    else{
+      drawWelcomeScreen();
+      //Draw the Tartine Button
+      //Set mode to PICK on click.
+    }
   }
 }
 
@@ -58,6 +68,7 @@ void drawSettings (){
     height - 50, 
     7 // rounded corners
   );
+  
   //=======EDIT FIELDS=====
   CPseudoEditor[] editors = new CPseudoEditor[pseudosList.length];
   
@@ -67,7 +78,11 @@ void drawSettings (){
   gc.draw();
 }
 
-
+//========WELCOME===========
+private void drawWelcomeScreen (){
+  gc.add (paramButton);
+  paramButton.addActionListener (this);
+}
 
 //========PICKING===========
 String getRandom (String[] pseudos){
@@ -117,4 +132,7 @@ public static GUIController controller (){
 }
 
 void actionPerformed (GUIEvent e){
+  if (e.getSource() == paramButton){
+    modeDelta = 0;
+  }
 }

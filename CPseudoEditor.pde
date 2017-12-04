@@ -57,6 +57,9 @@ public class CPseudoEditor{
       name
     );
     
+    editButton.addActionListener (this);
+    deleteButton.addActionListener(this);
+    
     GUIController gc = npntPseudoPicker.controller ();
     gc.add (editButton);
     gc.add (deleteButton);
@@ -76,13 +79,18 @@ public class CPseudoEditor{
   
   public void delete (){
     GUIController gc = npntPseudoPicker.controller();
-    
     gc.remove (editButton);
     gc.remove (deleteButton);
     gc.remove (nameField);
+    gc.draw();
   }
   
   void actionPerformed (GUIEvent e){
-    //@TODO
+    if (e.getSource() == editButton){
+      setEditMode ();
+    }
+    else if (e.getSource() == deleteButton){
+      delete ();
+    }
   }
 }
